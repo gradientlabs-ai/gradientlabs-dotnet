@@ -1,4 +1,4 @@
-using GradientLabs.Api.Http;
+﻿using GradientLabs.Api.Http;
 
 namespace GradientLabs.Api;
 
