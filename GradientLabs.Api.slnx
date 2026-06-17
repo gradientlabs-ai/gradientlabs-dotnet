@@ -1,0 +1,17 @@
+<Solution>
+  <Folder Name="/examples/">
+    <Project Path="examples/articles/articles.csproj" />
+    <Project Path="examples/back-office-tasks/back-office-tasks.csproj" />
+    <Project Path="examples/conversations/conversations.csproj" />
+    <Project Path="examples/procedures/procedures.csproj" />
+    <Project Path="examples/resources/resources.csproj" />
+    <Project Path="examples/tools/tools.csproj" />
+    <Project Path="examples/webhooks/webhooks.csproj" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/GradientLabs.Api/GradientLabs.Api.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/GradientLabs.Api.Tests/GradientLabs.Api.Tests.csproj" />
+  </Folder>
+</Solution>
