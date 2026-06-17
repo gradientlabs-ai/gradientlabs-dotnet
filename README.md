@@ -131,4 +131,4 @@ See [`examples/`](examples/) for runnable examples covering conversations, tools
 
 ## License
 
-MIT
+[MIT](LICENSE)
