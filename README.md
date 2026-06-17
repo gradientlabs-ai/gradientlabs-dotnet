@@ -129,6 +129,25 @@ do
 
 See [`examples/`](examples/) for runnable examples covering conversations, tools, articles, webhooks, procedures, resources, and back-office tasks.
 
+## Releasing
+
+Releases are published to [NuGet.org](https://www.nuget.org/packages/GradientLabs.Api) automatically when a version tag is pushed to `main`.
+
+**One-time setup** (if not already done):
+
+1. Create a NuGet.org API key scoped to push the `GradientLabs.Api` package.
+2. Add it as a `NUGET_API_KEY` Actions secret in the GitHub repo settings.
+
+**To publish a new version:**
+
+1. Merge all changes into `main`.
+2. Push a version tag:
+   ```sh
+   git tag v1.2.3
+   git push origin v1.2.3
+   ```
+3. The [publish workflow](.github/workflows/publish.yml) runs automatically: it packs the library and pushes the `.nupkg` to NuGet.org using the tag as the package version.
+
 ## License
 
 [MIT](LICENSE)
