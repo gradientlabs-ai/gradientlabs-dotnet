@@ -129,6 +129,25 @@ do
 
 See [`examples/`](examples/) for runnable examples covering conversations, tools, articles, webhooks, procedures, resources, and back-office tasks.
 
+## Releasing
+
+Releases are published to [NuGet.org](https://www.nuget.org/packages/GradientLabs.Api) automatically when a version tag is pushed to `main`.
+
+**One-time setup** (if not already done):
+
+1. On nuget.org, go to the package → **Trusted Publishers** → **Add trusted publisher**.
+2. Select **GitHub Actions** and fill in owner `gradientlabs-ai`, repository `gradientlabs-dotnet`, workflow `publish.yml`, policy name `gradientlabs-dotnet-publish`.
+
+**To publish a new version:**
+
+1. Merge all changes into `main`.
+2. Push a version tag:
+   ```sh
+   git tag v1.2.3
+   git push origin v1.2.3
+   ```
+3. The [publish workflow](.github/workflows/publish.yml) runs automatically: it packs the library and pushes the `.nupkg` to NuGet.org using the tag as the package version.
+
 ## License
 
 [MIT](LICENSE)
