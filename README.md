@@ -135,8 +135,8 @@ Releases are published to [NuGet.org](https://www.nuget.org/packages/GradientLab
 
 **One-time setup** (if not already done):
 
-1. Create a NuGet.org API key scoped to push the `GradientLabs.Api` package.
-2. Add it as a `NUGET_API_KEY` Actions secret in the GitHub repo settings.
+1. On nuget.org, go to the package → **Trusted Publishers** → **Add trusted publisher**.
+2. Select **GitHub Actions** and fill in owner `gradientlabs-ai`, repository `gradientlabs-dotnet`, workflow `publish.yml`, policy name `gradientlabs-dotnet-publish`.
 
 **To publish a new version:**
 
