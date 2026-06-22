@@ -87,9 +87,11 @@ internal sealed class HttpPipeline : IDisposable
         request.Headers.Add("User-Agent", _userAgent);
         request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-        if (body is not null)
+        if (body is not null || method == HttpMethod.Post || method == HttpMethod.Put || method == HttpMethod.Patch)
         {
-            var json = JsonSerializer.Serialize(body, GradientLabsJsonOptions.Default);
+            var json = body is not null
+                ? JsonSerializer.Serialize(body, GradientLabsJsonOptions.Default)
+                : "{}";
             request.Content = new StringContent(json, Encoding.UTF8, "application/json");
         }
 
