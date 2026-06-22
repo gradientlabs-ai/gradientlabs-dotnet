@@ -29,13 +29,9 @@ jobs:
             --output artifacts \
             -p:PackageVersion="$VERSION" \
             -p:ContinuousIntegrationBuild=true
-      - name: Get NuGet API token
-        id: nuget-token
-        uses: actions/github-script@v7
+      - name: NuGet login
+        uses: NuGet/login@v1
+        id: login
         with:
-          script: |
-            const token = await core.getIDToken('api.nuget.org')
-            core.setSecret(token)
-            return token
-          result-encoding: string
-      - run: dotnet nuget push "artifacts/*.nupkg" --source https://api.nuget.org/v3/index.json --api-key ${{ steps.nuget-token.outputs.result }} --skip-duplicate
+          user: sharan_gradientlabs_ai
+      - run: dotnet nuget push "artifacts/*.nupkg" --source https://api.nuget.org/v3/index.json --api-key ${{ steps.login.outputs.NUGET_API_KEY }} --skip-duplicate
