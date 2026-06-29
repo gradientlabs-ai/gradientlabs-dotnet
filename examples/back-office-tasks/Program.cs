@@ -17,9 +17,12 @@ using var client = new GradientLabsIntegrationClient(options);
 var taskId = $"example-task-{Guid.NewGuid():N}";
 Console.WriteLine($"Creating back-office task {taskId}...");
 
+// Replace with one of your configured agents and a procedure within it.
 var task = await client.BackOfficeTasks.CreateAsync(new CreateBackOfficeTaskRequest
 {
     Id = taskId,
+    AgentId = "agent_12345",
+    ProcedureId = "proc_12345",
     Input = new { request = "Please process this example task." },
 });
 Console.WriteLine($"Created: {task.Id} status={task.Status}");
