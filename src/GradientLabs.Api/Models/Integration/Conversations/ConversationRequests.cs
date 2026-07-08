@@ -13,6 +13,16 @@ public sealed class StartConversationRequest
     public string? AssigneeId { get; init; }
     public string? ConversationToken { get; init; }
     public DateTimeOffset? Created { get; init; }
+
+    public IReadOnlyList<CustomerSupportPlatformIdentifier>? CustomerSupportPlatformIdentifiers { get; init; }
+}
+
+public sealed class CustomerSupportPlatformIdentifier
+{
+    public SupportPlatform SupportPlatform { get; init; }
+    public CustomerSupportPlatformIdentifierType? Type { get; init; }
+
+    public string Value { get; init; } = string.Empty;
 }
 
 public sealed class CancelConversationRequest

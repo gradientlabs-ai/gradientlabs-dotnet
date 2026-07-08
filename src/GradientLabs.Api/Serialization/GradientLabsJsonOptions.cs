@@ -36,6 +36,7 @@ internal static class GradientLabsJsonOptions
         options.Converters.Add(new OpenStringConverter<ResourceSourceType>(v => new(v)));
         options.Converters.Add(new OpenStringConverter<SchemaUpdateStrategy>(v => new(v)));
         options.Converters.Add(new OpenStringConverter<SupportPlatform>(v => new(v)));
+        options.Converters.Add(new OpenStringConverter<CustomerSupportPlatformIdentifierType>(v => new(v)));
         options.Converters.Add(new OpenStringConverter<BodyEncoding>(v => new(v)));
         options.Converters.Add(new OpenStringConverter<ParameterSource>(v => new(v)));
         options.Converters.Add(new OpenStringConverter<ParameterType>(v => new(v)));
