@@ -107,4 +107,72 @@ public class SerializationTests
         var s = JsonSerializer.Deserialize<ArticleStatus>(json, GradientLabsJsonOptions.Default);
         s.Value.Should().Be(value);
     }
+
+    [Fact]
+    public void CustomerSupportPlatformIdentifiers_SerializeToSnakeCase()
+    {
+        var req = new StartConversationRequest
+        {
+            Id = "c1",
+            CustomerId = "u1",
+            Channel = ConversationChannel.Web,
+            CustomerSupportPlatformIdentifiers = new[]
+            {
+                new CustomerSupportPlatformIdentifier
+                {
+                    SupportPlatform = SupportPlatform.Intercom,
+                    Type = CustomerSupportPlatformIdentifierType.IntercomUser,
+                    Value = "6953e162a988d9ef0f73ef9b",
+                },
+                new CustomerSupportPlatformIdentifier
+                {
+                    SupportPlatform = SupportPlatform.Freshdesk,
+                    Value = "12345",
+                },
+            },
+        };
+
+        var json = JsonSerializer.Serialize(req, GradientLabsJsonOptions.Default);
+
+        json.Should().Contain("\"customer_support_platform_identifiers\"");
+        json.Should().Contain("\"support_platform\":\"intercom\"");
+        json.Should().Contain("\"type\":\"intercom_user\"");
+        json.Should().Contain("\"value\":\"6953e162a988d9ef0f73ef9b\"");
+        json.Should().Contain("\"support_platform\":\"freshdesk\"");
+        json.Should().Contain("\"value\":\"12345\"");
+    }
+
+    [Fact]
+    public void CustomerSupportPlatformIdentifiers_TypeOmittedWhenNull()
+    {
+        var identifier = new CustomerSupportPlatformIdentifier
+        {
+            SupportPlatform = SupportPlatform.Freshchat,
+            Value = "abc123",
+        };
+
+        var json = JsonSerializer.Serialize(identifier, GradientLabsJsonOptions.Default);
+
+        json.Should().NotContain("\"type\"");
+    }
+
+    [Fact]
+    public void CustomerSupportPlatformIdentifiers_NullOnRequest_IsOmitted()
+    {
+        var req = new StartConversationRequest { Id = "c1", CustomerId = "u1", Channel = ConversationChannel.Web };
+
+        var json = JsonSerializer.Serialize(req, GradientLabsJsonOptions.Default);
+
+        json.Should().NotContain("customer_support_platform_identifiers");
+    }
+
+    [Fact]
+    public void CustomerSupportPlatformIdentifierType_RoundTrips()
+    {
+        var json = JsonSerializer.Serialize(CustomerSupportPlatformIdentifierType.SalesforceAccountId, GradientLabsJsonOptions.Default);
+        json.Should().Be("\"salesforce_account_id\"");
+
+        var roundTripped = JsonSerializer.Deserialize<CustomerSupportPlatformIdentifierType>(json, GradientLabsJsonOptions.Default);
+        roundTripped.Should().Be(CustomerSupportPlatformIdentifierType.SalesforceAccountId);
+    }
 }
