@@ -14,15 +14,12 @@ public sealed class StartConversationRequest
     public string? ConversationToken { get; init; }
     public DateTimeOffset? Created { get; init; }
 
-    /// <summary>Links the customer to their record(s) in third-party support platforms, alongside <see cref="CustomerId"/>.</summary>
     public IReadOnlyList<CustomerSupportPlatformIdentifier>? CustomerSupportPlatformIdentifiers { get; init; }
 }
 
 public sealed class CustomerSupportPlatformIdentifier
 {
     public SupportPlatform SupportPlatform { get; init; }
-
-    /// <summary>Only required (and validated) for <c>intercom</c>, <c>zendesk</c>, and <c>salesforce</c>; omit for <c>freshchat</c>/<c>freshdesk</c>.</summary>
     public CustomerSupportPlatformIdentifierType? Type { get; init; }
 
     public string Value { get; init; } = string.Empty;
