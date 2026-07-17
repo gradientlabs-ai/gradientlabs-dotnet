@@ -41,6 +41,9 @@ public sealed class ConversationsClient
     public Task<Conversation> ReadAsync(string conversationId, CancellationToken cancellationToken = default)
         => _pipeline.SendAsync<Conversation>(HttpMethod.Get, $"/conversations/{Uri.EscapeDataString(conversationId)}/read", null, cancellationToken);
 
+    public Task DeleteAsync(string conversationId, CancellationToken cancellationToken = default)
+        => _pipeline.SendAsync(HttpMethod.Delete, $"/conversations/{Uri.EscapeDataString(conversationId)}", null, cancellationToken);
+
     [Obsolete("Use ReadAsync instead.")]
     public Task<Conversation> ReadDeprecatedAsync(string conversationId, string customerId, CancellationToken cancellationToken = default)
     {

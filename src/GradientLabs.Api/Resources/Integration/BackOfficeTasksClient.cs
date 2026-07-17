@@ -16,4 +16,7 @@ public sealed class BackOfficeTasksClient
 
     public Task<BackOfficeTask> ReadAsync(string taskId, CancellationToken cancellationToken = default)
         => _pipeline.SendAsync<BackOfficeTask>(HttpMethod.Get, $"/back-office-tasks/{Uri.EscapeDataString(taskId)}/read", null, cancellationToken);
+
+    public Task DeleteAsync(string taskId, CancellationToken cancellationToken = default)
+        => _pipeline.SendAsync(HttpMethod.Delete, $"/back-office-tasks/{Uri.EscapeDataString(taskId)}", null, cancellationToken);
 }
