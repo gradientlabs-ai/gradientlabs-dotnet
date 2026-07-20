@@ -7,6 +7,8 @@ public sealed class GradientLabsManagementClient : IDisposable
     private readonly HttpPipeline _pipeline;
     private readonly GradientLabsWebhookVerifier? _webhookVerifier;
 
+    public ConversationsClient Conversations { get; }
+    public BackOfficeTasksClient BackOfficeTasks { get; }
     public ArticlesClient Articles { get; }
     public ToolsClient Tools { get; }
     public ProceduresClient Procedures { get; }
@@ -26,6 +28,8 @@ public sealed class GradientLabsManagementClient : IDisposable
             throw new GradientLabsException("ApiKey must not be null or empty.");
 
         _pipeline = new HttpPipeline(options);
+        Conversations = new ConversationsClient(_pipeline);
+        BackOfficeTasks = new BackOfficeTasksClient(_pipeline);
         Articles = new ArticlesClient(_pipeline);
         Tools = new ToolsClient(_pipeline);
         Procedures = new ProceduresClient(_pipeline);
