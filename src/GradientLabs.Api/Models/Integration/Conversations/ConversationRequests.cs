@@ -34,6 +34,7 @@ public sealed class CancelConversationRequest
 public sealed class FinishConversationRequest
 {
     public string? Reason { get; init; }
+    public string? ReasonCode { get; init; }
     public DateTimeOffset? Timestamp { get; init; }
 }
 
