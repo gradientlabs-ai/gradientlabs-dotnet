@@ -63,6 +63,22 @@ public class SerializationTests
     }
 
     [Fact]
+    public void FinishConversationRequest_ReasonCode_SerializesToSnakeCase()
+    {
+        var req = new FinishConversationRequest { ReasonCode = "customer-ended-chat" };
+        var json = JsonSerializer.Serialize(req, GradientLabsJsonOptions.Default);
+        json.Should().Contain("\"reason_code\":\"customer-ended-chat\"");
+    }
+
+    [Fact]
+    public void FinishConversationRequest_NullReasonCode_IsOmitted()
+    {
+        var req = new FinishConversationRequest { Reason = "resolved" };
+        var json = JsonSerializer.Serialize(req, GradientLabsJsonOptions.Default);
+        json.Should().NotContain("reason_code");
+    }
+
+    [Fact]
     public void NanosecondTimeSpanConverter_ReadsNanoseconds()
     {
         var json = "1_000_000_000".Replace("_", "");
