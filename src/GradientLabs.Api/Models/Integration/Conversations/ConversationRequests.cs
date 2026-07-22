@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace GradientLabs.Api;
 
@@ -93,4 +94,20 @@ public sealed class RateConversationRequest
     public long MinValue { get; init; }
     public string? Comments { get; init; }
     public DateTimeOffset? Timestamp { get; init; }
+}
+
+public sealed class BulkUploadMemoriesRequest
+{
+    public string IdempotencyKey { get; init; } = string.Empty;
+    public IReadOnlyList<JsonElement> Memories { get; init; } = Array.Empty<JsonElement>();
+    public IReadOnlyList<string>? CreatedAtKeys { get; init; }
+}
+
+public sealed class BulkUploadMemoriesResponse
+{
+    public string UploadId { get; init; } = string.Empty;
+    public long MemoriesInserted { get; init; }
+
+    [JsonExtensionData]
+    public IDictionary<string, JsonElement>? AdditionalProperties { get; init; }
 }

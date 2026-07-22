@@ -44,6 +44,9 @@ public sealed class ConversationsClient
     public Task DeleteAsync(string conversationId, CancellationToken cancellationToken = default)
         => _pipeline.SendAsync(HttpMethod.Delete, $"/conversations/{Uri.EscapeDataString(conversationId)}", null, cancellationToken);
 
+    public Task<BulkUploadMemoriesResponse> BulkUploadMemoriesAsync(string conversationId, BulkUploadMemoriesRequest request, CancellationToken cancellationToken = default)
+        => _pipeline.SendAsync<BulkUploadMemoriesResponse>(HttpMethod.Post, $"/conversations/{Uri.EscapeDataString(conversationId)}/memories", request, cancellationToken);
+
     [Obsolete("Use ReadAsync instead.")]
     public Task<Conversation> ReadDeprecatedAsync(string conversationId, string customerId, CancellationToken cancellationToken = default)
     {
