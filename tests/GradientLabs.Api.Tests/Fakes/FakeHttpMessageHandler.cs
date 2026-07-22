@@ -8,6 +8,7 @@ internal sealed class FakeHttpMessageHandler : HttpMessageHandler
     private HttpResponseMessage _response;
 
     public HttpRequestMessage? LastRequest { get; private set; }
+    public string? LastRequestBody { get; private set; }
     public bool WasDisposed { get; private set; }
 
     public FakeHttpMessageHandler(
@@ -29,11 +30,12 @@ internal sealed class FakeHttpMessageHandler : HttpMessageHandler
         };
     }
 
-    protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+    protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
     {
         LastRequest = request;
+        LastRequestBody = request.Content is null ? null : await request.Content.ReadAsStringAsync(cancellationToken);
         cancellationToken.ThrowIfCancellationRequested();
-        return Task.FromResult(_response);
+        return _response;
     }
 
     protected override void Dispose(bool disposing)

@@ -10,7 +10,7 @@
     <Deterministic>true</Deterministic>
 
     <PackageId>GradientLabs.Api</PackageId>
-    <Version>0.1.1</Version>
+    <Version>0.2.0</Version>
     <Authors>Gradient Labs</Authors>
     <Description>Official C# client library for the Gradient Labs API.</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
