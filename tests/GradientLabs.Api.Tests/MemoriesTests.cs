@@ -16,82 +16,89 @@ public class MemoriesTests
             BaseUri = new Uri("https://localhost:9999"),
         });
 
+    private static Memory NewMemory(string externalId, string? customType = null)
+        => new()
+        {
+            ExternalId = externalId,
+            CustomType = customType,
+            CreatedAt = new DateTimeOffset(2026, 7, 1, 10, 0, 0, TimeSpan.Zero),
+            Data = JsonDocument.Parse("""{"any":"json object"}""").RootElement,
+        };
+
     [Fact]
-    public async Task BulkUploadMemories_SendsPostToExpectedPathWithSnakeCaseBody()
+    public async Task BatchCreateMemories_SendsPostToExpectedPathWithSnakeCaseBody()
     {
-        var handler = new FakeHttpMessageHandler(HttpStatusCode.OK, """{"upload_id":"upl_1","memories_inserted":2}""");
+        var handler = new FakeHttpMessageHandler(HttpStatusCode.Accepted);
         using var client = CreateClient(handler);
 
-        await client.Conversations.BulkUploadMemoriesAsync("conv 1", new BulkUploadMemoriesRequest
+        await client.Customers.BatchCreateMemoriesAsync("cust 1", new BatchCreateMemoriesRequest
         {
-            IdempotencyKey = "key-1",
             Memories = new[]
             {
-                JsonDocument.Parse("""{"kind":"order","id":"o1"}""").RootElement,
-                JsonDocument.Parse("""{"kind":"note","text":"hello"}""").RootElement,
+                NewMemory("order_123", "order"),
+                NewMemory("note_456"),
             },
-            CreatedAtKeys = new[] { "created_at", "timestamp" },
         });
 
         handler.LastRequest!.Method.Should().Be(HttpMethod.Post);
-        handler.LastRequest.RequestUri!.AbsolutePath.Should().Be("/conversations/conv%201/memories");
+        handler.LastRequest.RequestUri!.AbsolutePath.Should().Be("/customers/cust%201/memories");
 
         using var parsed = JsonDocument.Parse(handler.LastRequestBody!);
-        var root = parsed.RootElement;
-        root.GetProperty("idempotency_key").GetString().Should().Be("key-1");
-        root.GetProperty("memories").GetArrayLength().Should().Be(2);
-        root.GetProperty("memories")[0].GetProperty("kind").GetString().Should().Be("order");
-        root.GetProperty("created_at_keys").EnumerateArray().Select(e => e.GetString())
-            .Should().Equal("created_at", "timestamp");
+        var memories = parsed.RootElement.GetProperty("memories");
+        memories.GetArrayLength().Should().Be(2);
+
+        var first = memories[0];
+        first.GetProperty("external_id").GetString().Should().Be("order_123");
+        first.GetProperty("custom_type").GetString().Should().Be("order");
+        first.GetProperty("created_at").GetString().Should().Be("2026-07-01T10:00:00+00:00");
+        first.GetProperty("data").GetProperty("any").GetString().Should().Be("json object");
     }
 
     [Fact]
-    public async Task BulkUploadMemories_DeserializesResponse()
+    public async Task BatchCreateMemories_OmitsCustomTypeWhenNull()
     {
-        var handler = new FakeHttpMessageHandler(HttpStatusCode.OK, """{"upload_id":"upl_42","memories_inserted":7}""");
+        var handler = new FakeHttpMessageHandler(HttpStatusCode.Accepted);
         using var client = CreateClient(handler);
 
-        var response = await client.Conversations.BulkUploadMemoriesAsync("c1", new BulkUploadMemoriesRequest
+        await client.Customers.BatchCreateMemoriesAsync("c1", new BatchCreateMemoriesRequest
         {
-            IdempotencyKey = "key-1",
-            Memories = new[] { JsonDocument.Parse("""{"a":1}""").RootElement },
-        });
-
-        response.UploadId.Should().Be("upl_42");
-        response.MemoriesInserted.Should().Be(7);
-    }
-
-    [Fact]
-    public async Task BulkUploadMemories_OmitsCreatedAtKeysWhenNull()
-    {
-        var handler = new FakeHttpMessageHandler(HttpStatusCode.OK, """{"upload_id":"upl_1","memories_inserted":1}""");
-        using var client = CreateClient(handler);
-
-        await client.Conversations.BulkUploadMemoriesAsync("c1", new BulkUploadMemoriesRequest
-        {
-            IdempotencyKey = "key-1",
-            Memories = new[] { JsonDocument.Parse("""{"a":1}""").RootElement },
+            Memories = new[] { NewMemory("note_456") },
         });
 
         using var parsed = JsonDocument.Parse(handler.LastRequestBody!);
-        parsed.RootElement.TryGetProperty("created_at_keys", out _).Should().BeFalse();
+        parsed.RootElement.GetProperty("memories")[0].TryGetProperty("custom_type", out _).Should().BeFalse();
     }
 
     [Fact]
-    public async Task BulkUploadMemories_PropagatesApiError()
+    public async Task BatchCreateMemories_PropagatesApiError()
     {
-        var errorJson = """{"code":"invalid_argument","message":"missing idempotency key"}""";
+        var errorJson = """{"code":"invalid_argument","message":"memories must not be empty"}""";
         var handler = new FakeHttpMessageHandler(HttpStatusCode.BadRequest, errorJson);
         using var client = CreateClient(handler);
 
-        var act = () => client.Conversations.BulkUploadMemoriesAsync("c1", new BulkUploadMemoriesRequest
+        var act = () => client.Customers.BatchCreateMemoriesAsync("c1", new BatchCreateMemoriesRequest
         {
-            IdempotencyKey = "key-1",
-            Memories = new[] { JsonDocument.Parse("""{"a":1}""").RootElement },
+            Memories = new[] { NewMemory("order_123") },
         });
 
         var ex = await act.Should().ThrowAsync<GradientLabsApiException>();
         ex.Which.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         ex.Which.ErrorCode.Should().Be(GradientLabsErrorCode.InvalidArgument);
+    }
+
+    [Fact]
+    public async Task BatchCreateMemories_PropagatesConflict()
+    {
+        var errorJson = """{"code":"conflict","message":"a batch is already being created for this customer"}""";
+        var handler = new FakeHttpMessageHandler(HttpStatusCode.Conflict, errorJson);
+        using var client = CreateClient(handler);
+
+        var act = () => client.Customers.BatchCreateMemoriesAsync("c1", new BatchCreateMemoriesRequest
+        {
+            Memories = new[] { NewMemory("order_123") },
+        });
+
+        var ex = await act.Should().ThrowAsync<GradientLabsApiException>();
+        ex.Which.StatusCode.Should().Be(HttpStatusCode.Conflict);
     }
 }

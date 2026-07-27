@@ -2,9 +2,10 @@
 
 ## [0.2.0] - 2026-07-22
 
-Add `Conversations.BulkUploadMemoriesAsync` (POST `/conversations/{id}/memories`)
-for bulk uploading a batch of conversation-scoped memories the agent can search
-over on demand.
+Add `Customers.BatchCreateMemoriesAsync` (POST `/customers/{id}/memories`) for
+batch-creating customer-scoped memories the agent can search over on demand. The
+call is asynchronous (fire-and-forget) and returns no body; it may return `409
+Conflict` when a batch is already being created for the same customer.
 
 ## [0.1.1] - 2026-07-17
 
