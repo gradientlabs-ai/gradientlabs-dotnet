@@ -22,7 +22,6 @@ internal static class GradientLabsJsonOptions
         options.Converters.Add(new OpenStringConverter<ArticleVisibility>(v => new(v)));
         options.Converters.Add(new OpenStringConverter<AttachmentType>(v => new(v)));
         options.Converters.Add(new OpenStringConverter<ConversationChannel>(v => new(v)));
-        options.Converters.Add(new OpenStringConverter<CustomerSource>(v => new(v)));
         options.Converters.Add(new OpenStringConverter<ParticipantType>(v => new(v)));
         options.Converters.Add(new OpenStringConverter<ConversationEventType>(v => new(v)));
         options.Converters.Add(new OpenStringConverter<ProcedureStatus>(v => new(v)));

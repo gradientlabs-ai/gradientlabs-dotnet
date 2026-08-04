@@ -39,6 +39,52 @@ var conversation = await integration.Conversations.StartAsync(new StartConversat
 var tools = await management.Tools.ListAsync();
 ```
 
+## Outbound conversations
+
+There is one method per channel. `CustomerId` is always your own identifier for the customer; link
+them to third-party support platforms with `CustomerSupportPlatformIdentifiers`.
+
+```csharp
+await integration.Outbound.StartChatConversationAsync(new StartOutboundChatConversationRequest
+{
+    CustomerId = "customer-001",
+    ProcedureId = "proc_abc123",
+    SupportPlatform = SupportPlatform.Intercom,
+    Body = "Hi — your order is ready to collect.", // optional; the agent writes one if omitted
+    CustomerSupportPlatformIdentifiers = new[]
+    {
+        new CustomerSupportPlatformIdentifier
+        {
+            SupportPlatform = SupportPlatform.Intercom,
+            Type = CustomerSupportPlatformIdentifierType.IntercomUser,
+            Value = "6953e162a988d9ef0f73ef9b",
+        },
+    },
+});
+
+await integration.Outbound.StartEmailConversationAsync(new StartOutboundEmailConversationRequest
+{
+    CustomerId = "customer-001",
+    ProcedureId = "proc_abc123",
+    SupportPlatform = SupportPlatform.Zendesk,
+    Subject = "Your order",         // Subject and Body must be supplied together,
+    Body = "Your order is ready.",  // or both omitted for the agent to write the email
+});
+
+var call = await integration.Outbound.StartPhoneConversationAsync(new StartOutboundPhoneConversationRequest
+{
+    CustomerId = "customer-001",
+    ProcedureId = "proc_abc123",
+    ToPhoneNumber = "+14155551234",
+    FromPhoneNumber = "+442071838750", // must already be provisioned for your company
+});
+
+Console.WriteLine(call.ConversationId);
+```
+
+The procedure must be of type `outbound`, live, and enabled for the channel in question. Zendesk
+identifiers must use type `zendesk_support_user`, and Salesforce `salesforce_contact_id`.
+
 ## Configuration
 
 | Property | Type | Default | Description |
