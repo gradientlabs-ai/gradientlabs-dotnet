@@ -11,8 +11,11 @@ public sealed class ResourceTypesClient
         _pipeline = pipeline;
     }
 
-    public Task<IReadOnlyList<ResourceType>> ListAsync(CancellationToken cancellationToken = default)
-        => _pipeline.SendAsync<IReadOnlyList<ResourceType>>(HttpMethod.Get, "/resource-types", null, cancellationToken);
+    public async Task<IReadOnlyList<ResourceType>> ListAsync(CancellationToken cancellationToken = default)
+    {
+        var response = await _pipeline.SendAsync<ListResourceTypesResponse>(HttpMethod.Get, "/resource-types", null, cancellationToken).ConfigureAwait(false);
+        return response.ResourceTypes;
+    }
 
     public Task<ResourceType> CreateAsync(CreateResourceTypeRequest request, CancellationToken cancellationToken = default)
         => _pipeline.SendAsync<ResourceType>(HttpMethod.Post, "/resource-types", request, cancellationToken);
@@ -21,7 +24,7 @@ public sealed class ResourceTypesClient
         => _pipeline.SendAsync<ResourceType>(HttpMethod.Get, $"/resource-types/{Uri.EscapeDataString(resourceTypeId)}", null, cancellationToken);
 
     public Task<ResourceType> UpdateAsync(string resourceTypeId, UpdateResourceTypeRequest request, CancellationToken cancellationToken = default)
-        => _pipeline.SendAsync<ResourceType>(HttpMethod.Patch, $"/resource-types/{Uri.EscapeDataString(resourceTypeId)}", request, cancellationToken);
+        => _pipeline.SendAsync<ResourceType>(HttpMethod.Put, $"/resource-types/{Uri.EscapeDataString(resourceTypeId)}", request, cancellationToken);
 
     public Task DeleteAsync(string resourceTypeId, CancellationToken cancellationToken = default)
         => _pipeline.SendAsync(HttpMethod.Delete, $"/resource-types/{Uri.EscapeDataString(resourceTypeId)}", null, cancellationToken);

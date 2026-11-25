@@ -8,4 +8,7 @@ public sealed class AgentMessageEvent : WebhookEvent
     public string? Intent { get; init; }
     public bool IsHolding { get; init; }
     public WebhookConversation Conversation { get; init; } = new();
+
+    /// <summary>Your identifier for the last customer message received before the agent wrote this batch of replies. Null if unknown.</summary>
+    public string? LastCustomerMessageId { get; init; }
 }

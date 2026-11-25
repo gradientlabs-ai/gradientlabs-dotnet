@@ -19,9 +19,9 @@ public sealed class VoiceClient
     {
         var qs = QueryBuilder.Build(new Dictionary<string, string?>
         {
-            ["lookback_seconds"] = lookbackSeconds?.ToString(),
+            ["lookback_seconds"] = lookbackSeconds?.ToString(System.Globalization.CultureInfo.InvariantCulture),
             ["include_large_fields"] = includeLargeFields?.ToString()?.ToLowerInvariant(),
         });
-        return _pipeline.SendAsync<VoiceCallContext>(HttpMethod.Get, $"/voice/calls/{Uri.EscapeDataString(phoneNumber)}/context{qs}", null, cancellationToken);
+        return _pipeline.SendAsync<VoiceCallContext>(HttpMethod.Get, $"/voice/latest-call-context/{Uri.EscapeDataString(phoneNumber)}{qs}", null, cancellationToken);
     }
 }

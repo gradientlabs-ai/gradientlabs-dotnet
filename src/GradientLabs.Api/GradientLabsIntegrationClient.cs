@@ -8,6 +8,7 @@ public sealed class GradientLabsIntegrationClient : IDisposable
     private readonly GradientLabsWebhookVerifier? _webhookVerifier;
 
     public ConversationsClient Conversations { get; }
+    public CustomersClient Customers { get; }
     public BackOfficeTasksClient BackOfficeTasks { get; }
     public OutboundClient Outbound { get; }
     public VoiceClient Voice { get; }
@@ -19,6 +20,7 @@ public sealed class GradientLabsIntegrationClient : IDisposable
 
         _pipeline = new HttpPipeline(options);
         Conversations = new ConversationsClient(_pipeline);
+        Customers = new CustomersClient(_pipeline);
         BackOfficeTasks = new BackOfficeTasksClient(_pipeline);
         Outbound = new OutboundClient(_pipeline);
         Voice = new VoiceClient(_pipeline);

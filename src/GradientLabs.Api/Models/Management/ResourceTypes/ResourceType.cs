@@ -46,8 +46,18 @@ public sealed class ResourceTypeSourceConfig
 {
     public string SourceId { get; init; } = string.Empty;
     public IReadOnlyList<string> Attributes { get; init; } = [];
-    public bool Cache { get; init; }
+
+    /// <summary>
+    /// How long fetched data is reused before it is fetched again, as a duration string such as <c>10m</c> or <c>1h</c>.
+    /// <c>never</c> fetches it again on every turn. Defaults to 30 seconds when null.
+    /// </summary>
+    public string? Cache { get; init; }
 
     [JsonExtensionData]
     public IDictionary<string, JsonElement>? AdditionalProperties { get; init; }
+}
+
+internal sealed class ListResourceTypesResponse
+{
+    public IReadOnlyList<ResourceType> ResourceTypes { get; init; } = [];
 }

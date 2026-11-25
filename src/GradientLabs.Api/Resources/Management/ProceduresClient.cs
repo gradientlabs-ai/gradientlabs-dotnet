@@ -11,24 +11,31 @@ public sealed class ProceduresClient
         _pipeline = pipeline;
     }
 
-    public Task<Page<Procedure>> ListAsync(string? cursor = null, ProcedureStatus? status = null, CancellationToken cancellationToken = default)
+    public async Task<Page<Procedure>> ListAsync(string? cursor = null, ProcedureStatus? status = null, CancellationToken cancellationToken = default)
     {
         var qs = QueryBuilder.Build(new Dictionary<string, string?>
         {
             ["cursor"] = cursor,
             ["status"] = status?.Value,
         });
-        return _pipeline.SendAsync<Page<Procedure>>(HttpMethod.Get, $"/procedures{qs}", null, cancellationToken);
+        var response = await _pipeline.SendAsync<ListProceduresResponse>(HttpMethod.Get, $"/procedures{qs}", null, cancellationToken).ConfigureAwait(false);
+        return (response.Pagination ?? new PaginationCursors()).ToPage(response.Procedures);
     }
 
     public Task<Procedure> ReadAsync(string procedureId, CancellationToken cancellationToken = default)
         => _pipeline.SendAsync<Procedure>(HttpMethod.Get, $"/procedure/{Uri.EscapeDataString(procedureId)}", null, cancellationToken);
 
-    public Task SetLimitAsync(string procedureId, SetProcedureLimitRequest request, CancellationToken cancellationToken = default)
-        => _pipeline.SendAsync(HttpMethod.Post, $"/procedure/{Uri.EscapeDataString(procedureId)}/limit", request, cancellationToken);
+    public async Task<Procedure> SetLimitAsync(string procedureId, SetProcedureLimitRequest request, CancellationToken cancellationToken = default)
+    {
+        var response = await _pipeline.SendAsync<SetProcedureLimitResponse>(HttpMethod.Post, $"/procedure/{Uri.EscapeDataString(procedureId)}/limit", request, cancellationToken).ConfigureAwait(false);
+        return response.Procedure;
+    }
 
-    public Task<IReadOnlyList<ProcedureVersion>> ListVersionsAsync(string procedureId, CancellationToken cancellationToken = default)
-        => _pipeline.SendAsync<IReadOnlyList<ProcedureVersion>>(HttpMethod.Get, $"/procedures/{Uri.EscapeDataString(procedureId)}/versions", null, cancellationToken);
+    public async Task<IReadOnlyList<ProcedureVersion>> ListVersionsAsync(string procedureId, CancellationToken cancellationToken = default)
+    {
+        var response = await _pipeline.SendAsync<ListProcedureVersionsResponse>(HttpMethod.Get, $"/procedures/{Uri.EscapeDataString(procedureId)}/versions", null, cancellationToken).ConfigureAwait(false);
+        return response.Versions;
+    }
 
     public Task SetLiveAsync(string procedureId, long version, CancellationToken cancellationToken = default)
         => _pipeline.SendAsync(HttpMethod.Post, $"/procedures/{Uri.EscapeDataString(procedureId)}/versions/{version}/set-live", null, cancellationToken);

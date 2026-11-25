@@ -11,12 +11,12 @@ public sealed class ArticlesClient
         _pipeline = pipeline;
     }
 
-    public Task UpsertAsync(string supportPlatform, UpsertArticleRequest request, CancellationToken cancellationToken = default)
-        => _pipeline.SendAsync(HttpMethod.Put, $"/support-platforms/{Uri.EscapeDataString(supportPlatform)}/articles/{Uri.EscapeDataString(request.Id)}", request, cancellationToken);
+    public Task UpsertAsync(UpsertArticleRequest request, CancellationToken cancellationToken = default)
+        => _pipeline.SendAsync(HttpMethod.Post, "/articles", request, cancellationToken);
 
-    public Task DeleteAsync(string supportPlatform, string articleId, CancellationToken cancellationToken = default)
-        => _pipeline.SendAsync(HttpMethod.Delete, $"/support-platforms/{Uri.EscapeDataString(supportPlatform)}/articles/{Uri.EscapeDataString(articleId)}", null, cancellationToken);
+    public Task DeleteAsync(string articleId, CancellationToken cancellationToken = default)
+        => _pipeline.SendAsync(HttpMethod.Delete, $"/articles/{Uri.EscapeDataString(articleId)}", null, cancellationToken);
 
-    public Task SetUsageStatusAsync(string supportPlatform, string articleId, SetArticleUsageStatusRequest request, CancellationToken cancellationToken = default)
-        => _pipeline.SendAsync(HttpMethod.Put, $"/support-platforms/{Uri.EscapeDataString(supportPlatform)}/articles/{Uri.EscapeDataString(articleId)}/usage-status", request, cancellationToken);
+    public Task SetUsageStatusAsync(string articleId, SetArticleUsageStatusRequest request, CancellationToken cancellationToken = default)
+        => _pipeline.SendAsync(HttpMethod.Post, $"/articles/{Uri.EscapeDataString(articleId)}/usage-status", request, cancellationToken);
 }

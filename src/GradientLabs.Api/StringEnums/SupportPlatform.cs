@@ -7,6 +7,7 @@ public readonly record struct SupportPlatform(string Value)
     public static readonly SupportPlatform Freshdesk = new("freshdesk");
     public static readonly SupportPlatform Gmail = new("gmail");
     public static readonly SupportPlatform Intercom = new("intercom");
+    public static readonly SupportPlatform Kustomer = new("kustomer");
     public static readonly SupportPlatform Livechat = new("livechat");
     public static readonly SupportPlatform PublicApi = new("public-api");
     public static readonly SupportPlatform ChatSdk = new("chat-sdk");

@@ -245,4 +245,99 @@ public class WebhookVerifierTests
 
         act.Should().NotThrow();
     }
+
+    [Fact]
+    public void ConversationStart_ParsesCorrectly()
+    {
+        var body = """{"id":"e6","type":"conversation.start","sequence_number":1,"timestamp":"2024-01-01T00:00:00Z","data":{"customer_id":"acme_user_99","channel":"email","body":"Hi there","subject":"Your payment","initiator_id":"public-api"}}"""u8.ToArray();
+        var header = MakeSignatureHeader(body, TestKey);
+        var verifier = CreateVerifier();
+
+        var evt = verifier.Parse(body, header);
+
+        evt.Should().BeOfType<ConversationStartEvent>();
+        var cs = (ConversationStartEvent)evt;
+        cs.Type.Should().Be(GradientLabsWebhookEventType.ConversationStart);
+        cs.CustomerId.Should().Be("acme_user_99");
+        cs.Channel.Should().Be(ConversationChannel.Email);
+        cs.Body.Should().Be("Hi there");
+        cs.Subject.Should().Be("Your payment");
+        cs.InitiatorId.Should().Be("public-api");
+    }
+
+    [Fact]
+    public void ConversationStartWebhookResponse_SerializesSnakeCase()
+    {
+        new ConversationStartWebhookResponse { ConversationId = "ticket-48213" }.ToJson()
+            .Should().Be("""{"conversation_id":"ticket-48213"}""");
+    }
+
+    [Theory]
+    [InlineData("back-office-task.complete", typeof(BackOfficeTaskCompleteEvent))]
+    [InlineData("back-office-task.fail", typeof(BackOfficeTaskFailEvent))]
+    [InlineData("back-office-task.hand-off", typeof(BackOfficeTaskHandOffEvent))]
+    public void BackOfficeTaskEvents_ParseTheTask(string type, Type expected)
+    {
+        var bodyStr = "{\"id\":\"e7\",\"type\":\"" + type + "\",\"sequence_number\":1,\"timestamp\":\"2024-01-01T00:00:00Z\",\"data\":{\"back_office_task\":{\"id\":\"task-1\",\"agent_id\":\"agent_1\",\"input\":{\"a\":1},\"status\":\"completed\",\"created\":\"2024-01-01T00:00:00Z\",\"completed\":\"2024-01-01T00:01:00Z\",\"failed\":\"0001-01-01T00:00:00Z\",\"handed_off\":\"0001-01-01T00:00:00Z\",\"updated\":\"2024-01-01T00:01:00Z\",\"hand_off_reason\":\"operator-handoff\",\"result\":{\"result_type\":\"custom\",\"custom\":{\"ok\":true}}}}}";
+        var body = Encoding.UTF8.GetBytes(bodyStr);
+        var header = MakeSignatureHeader(body, TestKey);
+        var verifier = CreateVerifier();
+
+        var evt = verifier.Parse(body, header);
+
+        evt.Should().BeOfType(expected);
+        var task = evt switch
+        {
+            BackOfficeTaskCompleteEvent e => e.BackOfficeTask,
+            BackOfficeTaskFailEvent e => e.BackOfficeTask,
+            BackOfficeTaskHandOffEvent e => e.BackOfficeTask,
+            _ => throw new InvalidOperationException(),
+        };
+        task.Id.Should().Be("task-1");
+        task.AgentId.Should().Be("agent_1");
+        task.Status.Should().Be(BackOfficeTaskStatus.Completed);
+        task.HandOffReason.Should().Be("operator-handoff");
+        task.Result!.ResultType.Should().Be("custom");
+        task.Input.GetProperty("a").GetInt32().Should().Be(1);
+    }
+
+    [Fact]
+    public void AgentMessage_ParsesLastCustomerMessageId()
+    {
+        var body = """{"id":"e8","type":"agent.message","sequence_number":1,"timestamp":"2024-01-01T00:00:00Z","data":{"body":"hello","total":2,"sequence":1,"last_customer_message_id":"msg-7731","conversation":{"id":"c1","customer_id":"u1"}}}"""u8.ToArray();
+        var header = MakeSignatureHeader(body, TestKey);
+        var verifier = CreateVerifier();
+
+        var evt = (AgentMessageEvent)verifier.Parse(body, header);
+
+        evt.LastCustomerMessageId.Should().Be("msg-7731");
+        evt.Total.Should().Be(2);
+    }
+
+    [Fact]
+    public void ActionExecute_ForBackOfficeTask_HasNoConversation()
+    {
+        var body = """{"id":"e9","type":"action.execute","sequence_number":1,"timestamp":"2024-01-01T00:00:00Z","data":{"action":"refund","params":{"amount":5},"back_office_task":{"id":"task-1"}}}"""u8.ToArray();
+        var header = MakeSignatureHeader(body, TestKey);
+        var verifier = CreateVerifier();
+
+        var evt = (ActionExecuteEvent)verifier.Parse(body, header);
+
+        evt.Conversation.Should().BeNull();
+        evt.BackOfficeTask!.Id.Should().Be("task-1");
+    }
+
+    [Fact]
+    public void ResourcePull_ParsesConversationSourceAndMetadata()
+    {
+        var body = """{"id":"e10","type":"resource.pull","sequence_number":1,"timestamp":"2024-01-01T00:00:00Z","data":{"resource_type":"order","conversation":{"id":"c1","customer_id":"u1","customer_source":"intercom","metadata":{"plan":"pro"}}}}"""u8.ToArray();
+        var header = MakeSignatureHeader(body, TestKey);
+        var verifier = CreateVerifier();
+
+        var evt = (ResourcePullEvent)verifier.Parse(body, header);
+
+        evt.Conversation!.CustomerSource.Should().Be("intercom");
+        evt.Conversation.Metadata!.Value.GetProperty("plan").GetString().Should().Be("pro");
+        evt.BackOfficeTask.Should().BeNull();
+    }
 }

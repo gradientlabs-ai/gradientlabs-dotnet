@@ -5,16 +5,37 @@ namespace GradientLabs.Api;
 
 public sealed class Topic
 {
+    [JsonPropertyName("Source")]
     public string Source { get; init; } = string.Empty;
+
+    [JsonPropertyName("ExternalID")]
     public string ExternalId { get; init; } = string.Empty;
+
+    [JsonPropertyName("Name")]
     public string Name { get; init; } = string.Empty;
+
+    [JsonPropertyName("Description")]
     public string? Description { get; init; }
+
+    [JsonPropertyName("Visibility")]
     public ArticleVisibility Visibility { get; init; }
+
+    [JsonPropertyName("ParentExternalID")]
     public string? ParentExternalId { get; init; }
+
+    [JsonPropertyName("Created")]
     public DateTimeOffset Created { get; init; }
+
+    [JsonPropertyName("LastEdited")]
     public DateTimeOffset LastEdited { get; init; }
+
+    [JsonPropertyName("LastSeen")]
     public DateTimeOffset? LastSeen { get; init; }
+
+    [JsonPropertyName("Data")]
     public byte[]? Data { get; init; }
+
+    [JsonPropertyName("PublicURL")]
     public string? PublicUrl { get; init; }
 
     [JsonExtensionData]
@@ -33,4 +54,10 @@ public sealed class UpsertArticleTopicRequest
     public DateTimeOffset Created { get; init; }
     public DateTimeOffset LastEdited { get; init; }
     public string? PublicUrl { get; init; }
+}
+
+internal sealed class ListTopicsResponse
+{
+    [JsonPropertyName("Topics")]
+    public IReadOnlyList<Topic> Topics { get; init; } = [];
 }

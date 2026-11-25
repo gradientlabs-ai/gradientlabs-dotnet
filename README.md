@@ -156,6 +156,17 @@ switch (evt)
 
 Both clients also expose a `ParseWebhook` convenience method when `WebhookSigningKey` is set in options.
 
+A `conversation.start` event (`ConversationStartEvent`) asks you to open an outbound conversation on your own
+platform. Reply with the ID of the conversation you opened:
+
+```csharp
+if (evt is ConversationStartEvent start)
+{
+    var conversationId = await OpenConversationAsync(start.CustomerId, start.Channel, start.Subject, start.Body);
+    return Results.Content(new ConversationStartWebhookResponse { ConversationId = conversationId }.ToJson(), "application/json");
+}
+```
+
 ## Pagination
 
 Only `Procedures.ListAsync` is paginated. All other list methods return the full result.

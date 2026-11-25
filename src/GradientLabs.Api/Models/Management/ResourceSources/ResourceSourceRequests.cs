@@ -10,6 +10,12 @@ public sealed class CreateResourceSourceRequest
     public IReadOnlyDictionary<string, string>? AttributeDescriptions { get; init; }
     public ResourceSourceHttpConfig? HttpConfig { get; init; }
     public ResourceSourceWebhookConfig? WebhookConfig { get; init; }
+
+    /// <summary>The ID of a branch to create the resource source on. Send this or <see cref="BranchName"/>.</summary>
+    public string? BranchId { get; init; }
+
+    /// <summary>The git branch name of the branch to create on, as an alternative to <see cref="BranchId"/>.</summary>
+    public string? BranchName { get; init; }
 }
 
 public sealed class UpdateResourceSourceRequest

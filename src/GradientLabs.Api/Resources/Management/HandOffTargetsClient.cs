@@ -11,11 +11,14 @@ public sealed class HandOffTargetsClient
         _pipeline = pipeline;
     }
 
-    public Task<IReadOnlyList<HandOffTarget>> ListAsync(CancellationToken cancellationToken = default)
-        => _pipeline.SendAsync<IReadOnlyList<HandOffTarget>>(HttpMethod.Get, "/hand-off-targets", null, cancellationToken);
+    public async Task<IReadOnlyList<HandOffTarget>> ListAsync(CancellationToken cancellationToken = default)
+    {
+        var response = await _pipeline.SendAsync<ListHandOffTargetsResponse>(HttpMethod.Get, "/hand-off-targets", null, cancellationToken).ConfigureAwait(false);
+        return response.Targets;
+    }
 
     public Task UpsertAsync(UpsertHandOffTargetRequest request, CancellationToken cancellationToken = default)
-        => _pipeline.SendAsync(HttpMethod.Put, "/hand-off-targets", request, cancellationToken);
+        => _pipeline.SendAsync(HttpMethod.Post, "/hand-off-targets", request, cancellationToken);
 
     public Task DeleteAsync(string id, CancellationToken cancellationToken = default)
     {

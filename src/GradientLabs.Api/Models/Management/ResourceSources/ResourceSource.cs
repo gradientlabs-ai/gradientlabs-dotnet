@@ -18,6 +18,21 @@ public sealed class ResourceSource
     public ResourceSourceWebhookConfig? WebhookConfig { get; init; }
     public ResourceSchema? Schema { get; init; }
 
+    /// <summary>Set for a source Gradient Labs creates and maintains for an integration. A managed source can't be edited or deleted.</summary>
+    public ResourceSourceManaged? Managed { get; init; }
+
+    [JsonExtensionData]
+    public IDictionary<string, JsonElement>? AdditionalProperties { get; init; }
+}
+
+public sealed class ResourceSourceManaged
+{
+    /// <summary>Whether the source can currently be used.</summary>
+    public bool Enabled { get; init; }
+
+    /// <summary>The integration data this source reads, such as <c>intercom.contact</c>. It never changes.</summary>
+    public string Key { get; init; } = string.Empty;
+
     [JsonExtensionData]
     public IDictionary<string, JsonElement>? AdditionalProperties { get; init; }
 }
@@ -49,4 +64,9 @@ public sealed class ResourceSourceWebhookConfig
 
     [JsonExtensionData]
     public IDictionary<string, JsonElement>? AdditionalProperties { get; init; }
+}
+
+internal sealed class ListResourceSourcesResponse
+{
+    public IReadOnlyList<ResourceSource> ResourceSources { get; init; } = [];
 }
