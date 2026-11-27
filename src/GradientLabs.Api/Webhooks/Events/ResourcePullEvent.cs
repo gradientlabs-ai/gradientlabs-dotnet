@@ -1,5 +1,6 @@
 ﻿namespace GradientLabs.Api;
 
+[Obsolete("Resource fetches are delivered as action.execute events. Use ActionExecuteEvent.")]
 public sealed class ResourcePullEvent : WebhookEvent
 {
     public string ResourceType { get; init; } = string.Empty;

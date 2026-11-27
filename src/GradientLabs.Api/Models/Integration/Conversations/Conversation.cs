@@ -12,8 +12,11 @@ public sealed class Conversation
     public string Status { get; init; } = string.Empty;
     public bool AgentIsActive { get; init; }
     public ConversationChannel Channel { get; init; }
+    /// <summary>Returned when reading a conversation that has a known intent.</summary>
     public string? LatestIntent { get; init; }
+    /// <summary>Returned when reading a conversation with a hand-off target.</summary>
     public string? LatestHandoffTarget { get; init; }
+    /// <summary>Empty when starting a conversation. Read the conversation for intent and hand-off details.</summary>
     public AgentMetadata? LatestAgentMetadata { get; init; }
 
     [JsonExtensionData]

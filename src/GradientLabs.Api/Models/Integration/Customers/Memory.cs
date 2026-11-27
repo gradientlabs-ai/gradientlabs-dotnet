@@ -14,7 +14,7 @@ public sealed class Memory
     /// <summary>The time the memory's underlying event occurred.</summary>
     public DateTimeOffset CreatedAt { get; init; }
 
-    /// <summary>Arbitrary JSON object stored verbatim as the memory's payload.</summary>
+    /// <summary>Any JSON value stored verbatim as the memory's payload.</summary>
     public JsonElement Data { get; init; }
 
     [JsonExtensionData]

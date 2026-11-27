@@ -26,7 +26,12 @@ public sealed class UpdateResourceSourceRequest
     public ResourceSourceHttpConfig? HttpConfig { get; init; }
     public ResourceSourceWebhookConfig? WebhookConfig { get; init; }
     public ResourceSourceType? SourceType { get; init; }
-    public ResourceSchema? Schema { get; init; }
+    public ResourceSourceSchemaUpdate? Schema { get; init; }
+}
+
+public sealed class ResourceSourceSchemaUpdate
+{
+    public JsonElement Raw { get; init; }
 }
 
 public sealed class UpdateSchemaByExamplesRequest

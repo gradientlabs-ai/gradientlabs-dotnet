@@ -169,7 +169,7 @@ if (evt is ConversationStartEvent start)
 
 ## Pagination
 
-Only `Procedures.ListAsync` is paginated. All other list methods return the full result.
+`Procedures.ListAsync`, `Files.ListAsync` and `Notes.ListAsync` return pages. Pass the next cursor to fetch another page.
 
 ```csharp
 string? cursor = null;

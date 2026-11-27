@@ -20,8 +20,8 @@ public sealed class ConversationsClient
     public Task FinishAsync(string conversationId, FinishConversationRequest? request = null, CancellationToken cancellationToken = default)
         => _pipeline.SendAsync(HttpMethod.Put, $"/conversations/{Uri.EscapeDataString(conversationId)}/finish", request, cancellationToken);
 
-    public Task AddMessageAsync(string conversationId, AddMessageRequest request, CancellationToken cancellationToken = default)
-        => _pipeline.SendAsync(HttpMethod.Post, $"/conversations/{Uri.EscapeDataString(conversationId)}/messages", request, cancellationToken);
+    public Task<ConversationMessage> AddMessageAsync(string conversationId, AddMessageRequest request, CancellationToken cancellationToken = default)
+        => _pipeline.SendAsync<ConversationMessage>(HttpMethod.Post, $"/conversations/{Uri.EscapeDataString(conversationId)}/messages", request, cancellationToken);
 
     public Task ResumeAsync(string conversationId, ResumeConversationRequest request, CancellationToken cancellationToken = default)
         => _pipeline.SendAsync(HttpMethod.Put, $"/conversations/{Uri.EscapeDataString(conversationId)}/resume", request, cancellationToken);

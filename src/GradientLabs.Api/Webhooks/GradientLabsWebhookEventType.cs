@@ -7,6 +7,7 @@ public readonly record struct GradientLabsWebhookEventType(string Value)
     public static readonly GradientLabsWebhookEventType ConversationFinished = new("conversation.finished");
     public static readonly GradientLabsWebhookEventType ConversationStart = new("conversation.start");
     public static readonly GradientLabsWebhookEventType ActionExecute = new("action.execute");
+    [Obsolete("Resource fetches are delivered as action.execute events. Use ActionExecuteEvent.")]
     public static readonly GradientLabsWebhookEventType ResourcePull = new("resource.pull");
     public static readonly GradientLabsWebhookEventType BackOfficeTaskComplete = new("back-office-task.complete");
     public static readonly GradientLabsWebhookEventType BackOfficeTaskHandOff = new("back-office-task.hand-off");

@@ -9,19 +9,10 @@ public sealed class Procedure
     public string Name { get; init; } = string.Empty;
     public string? Description { get; init; }
     public ProcedureStatus Status { get; init; }
-    public UserDetails? Author { get; init; }
     public DateTimeOffset Created { get; init; }
     public DateTimeOffset Updated { get; init; }
     public bool HasDailyLimit { get; init; }
     public long? MaxDailyConversations { get; init; }
-
-    [JsonExtensionData]
-    public IDictionary<string, JsonElement>? AdditionalProperties { get; init; }
-}
-
-public sealed class UserDetails
-{
-    public string? Email { get; init; }
 
     [JsonExtensionData]
     public IDictionary<string, JsonElement>? AdditionalProperties { get; init; }

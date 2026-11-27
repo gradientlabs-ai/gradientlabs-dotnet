@@ -14,12 +14,19 @@ Brings the library in line with the whole public API.
 | `Conversations.ReadDeprecatedAsync(conversationId, customerId)` | `Conversations.ReadDeprecatedAsync(conversationId)`: the API takes no customer ID |
 | `Notes.SetStatusAsync` returned `Task<Note>` | Returns `Task`: the API returns no body |
 | `TrafficGroups.CreateTargetAsync` and `CreateExclusionAsync` returned `TrafficGroup` | Return the created `TrafficGroupTarget` |
+| `CreateBackOfficeTaskRequest` | Supply `AgentId`, `ProcedureId` and `Input`. JSON null is a valid input value. |
+| `ReturnAsyncToolResultRequest` | Supply the result in `Payload`, including when the payload is JSON null. |
+| `CreateToolRequest.Id` | Read the assigned ID from the returned tool. Create a tool with HTTP, webhook, async or draft settings. |
+| `UpdateResourceSourceRequest.Schema` was a `ResourceSchema` | Supply a `ResourceSourceSchemaUpdate` containing the raw JSON schema. |
+| `SecretRefreshMechanismHttp.RequestDefinition` used tool retry settings | Supply a `SecretRefreshRequestDefinition` with an optional request timeout. |
+| `Procedure.Author` and `PublicApiAttachment.RawContents` | These properties are absent from procedure and task responses. |
 | `ProcedureVersion.Author` was a `UserDetails` | A `string` |
 | `ResourceTypeSourceConfig.Cache` was a `bool` | A duration `string` such as `"10m"`, or `"never"` |
 | `Secret.RefreshMechanismHttp` and `WriteSecretRequest.RefreshMechanismHttp` were an `HttpDefinition` | A `SecretRefreshMechanismHttp` holding `RequestDefinition` and `ResponseParamName` |
 | `CreateNoteRequest.Body` was a non-null `string` | `string?`: send exactly one of `Body` and `WebpageUrl` |
 | `ExecuteToolRequest.Token` was a non-null `string` | `string?`, left out when null |
-| `ActionExecuteEvent.Conversation` and `ResourcePullEvent.Conversation` were never null | Null when the event is for a back-office task, which is in the new `BackOfficeTask` |
+| `ResourcePullEvent` | Handle resource fetches as `ActionExecuteEvent` with the configured action name. |
+| `ActionExecuteEvent.Conversation` was never null | Null when the event is for a back-office task, which is in the new `BackOfficeTask` |
 
 Fixed requests and responses that never worked against the API:
 
@@ -43,11 +50,12 @@ Added:
 - `Conversations.ReadAsync(conversationId, supportPlatform)` and `Tools.ReadAsync(toolId, version)` overloads.
 - The `conversation.start` webhook event (`ConversationStartEvent`) and `ConversationStartWebhookResponse`
   to reply to it.
+- `Conversations.AddMessageAsync` returns the stored message. Back-office task attachments send inline file contents under `base_64_contents`.
 - Fields: `KnowledgeBaseIds` on articles and notes, `Attributes` on notes, `Ref` on hand-off targets,
   `BranchId`/`BranchName` on tool, resource type and resource source creation, `Managed` on resource
   sources, `TransferMode` on tool parameters, `Retry` on HTTP definitions, `ParameterSets` on tool
   updates, `LiveHandoffUrl` on voice call context, `LastCustomerMessageId` on agent messages, and
-  `CustomerSource`, `Metadata` and `BackOfficeTask` on action and resource webhook events.
+  `CustomerSource`, `Metadata` and `BackOfficeTask` on action webhook events.
 - Values: `ParameterType` `StringArray`, `Json`, `Duration`, `Attachment`; `ParameterTransferMode`;
   `SupportPlatform.Kustomer`; `CustomerSupportPlatformIdentifierType` `SalesforceContactEmail` and
   `SalesforceSuppliedEmail`.

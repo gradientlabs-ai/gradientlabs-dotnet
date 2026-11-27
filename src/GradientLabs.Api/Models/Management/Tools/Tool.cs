@@ -15,7 +15,9 @@ public sealed class Tool
     public McpConfiguration? Mcp { get; init; }
     public bool? Draft { get; init; }
     public IReadOnlyList<ToolParameterSet>? ParameterSets { get; init; }
+    /// <summary>Returned when creating a tool on a branch.</summary>
     public string? BranchId { get; init; }
+    /// <summary>Returned when creating a tool on a branch.</summary>
     public string? BranchName { get; init; }
 
     [JsonExtensionData]
@@ -112,16 +114,6 @@ public sealed class ChildTool
 {
     public HttpDefinition? Http { get; init; }
     public ToolWebhookConfig? Webhook { get; init; }
-    public WorkflowConfiguration? Workflow { get; init; }
-
-    [JsonExtensionData]
-    public IDictionary<string, JsonElement>? AdditionalProperties { get; init; }
-}
-
-public sealed class WorkflowConfiguration
-{
-    public string WorkflowType { get; init; } = string.Empty;
-    public string TaskQueue { get; init; } = string.Empty;
 
     [JsonExtensionData]
     public IDictionary<string, JsonElement>? AdditionalProperties { get; init; }

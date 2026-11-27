@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace GradientLabs.Api;
 
@@ -41,13 +42,23 @@ public sealed class FinishConversationRequest
 public sealed class AddMessageRequest
 {
     public string Id { get; init; } = string.Empty;
-    public string Body { get; init; } = string.Empty;
-    public string ParticipantId { get; init; } = string.Empty;
+    public string? Body { get; init; }
+    public string? ParticipantId { get; init; }
     public ParticipantType ParticipantType { get; init; }
     public IReadOnlyList<Attachment>? Attachments { get; init; }
     public string? ConversationToken { get; init; }
     public DateTimeOffset? Created { get; init; }
     public string? Subject { get; init; }
+}
+
+public sealed class ConversationMessage
+{
+    public string Id { get; init; } = string.Empty;
+    public string Body { get; init; } = string.Empty;
+    public string ParticipantId { get; init; } = string.Empty;
+    public ParticipantType ParticipantType { get; init; }
+    public IReadOnlyList<Attachment>? Attachments { get; init; }
+    public DateTimeOffset? Created { get; init; }
 }
 
 public sealed class ResumeConversationRequest
@@ -62,7 +73,8 @@ public sealed class ResumeConversationRequest
 public sealed class ReturnAsyncToolResultRequest
 {
     public string AsyncToolExecutionId { get; init; } = string.Empty;
-    public object? Payload { get; init; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
+    public required object? Payload { get; init; }
     public DateTimeOffset? Timestamp { get; init; }
 }
 

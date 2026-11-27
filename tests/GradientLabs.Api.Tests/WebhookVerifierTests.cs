@@ -167,7 +167,7 @@ public class WebhookVerifierTests
     }
 
     [Fact]
-    public void ResourcePull_ParsesCorrectly()
+    public void LegacyResourcePull_UsesUnknownEvent()
     {
         var body = """{"id":"e5","type":"resource.pull","sequence_number":1,"timestamp":"2024-01-01T00:00:00Z","resource_type":"order","conversation":{"id":"c1","customer_id":"u1"}}"""u8.ToArray();
         var header = MakeSignatureHeader(body, TestKey);
@@ -175,9 +175,7 @@ public class WebhookVerifierTests
 
         var evt = verifier.Parse(body, header);
 
-        evt.Should().BeOfType<ResourcePullEvent>();
-        var rp = (ResourcePullEvent)evt;
-        rp.ResourceType.Should().Be("order");
+        evt.Should().BeOfType<UnknownWebhookEvent>();
     }
 
     [Fact]
@@ -328,13 +326,13 @@ public class WebhookVerifierTests
     }
 
     [Fact]
-    public void ResourcePull_ParsesConversationSourceAndMetadata()
+    public void ResourceFetch_ParsesConversationSourceAndMetadata()
     {
-        var body = """{"id":"e10","type":"resource.pull","sequence_number":1,"timestamp":"2024-01-01T00:00:00Z","data":{"resource_type":"order","conversation":{"id":"c1","customer_id":"u1","customer_source":"intercom","metadata":{"plan":"pro"}}}}"""u8.ToArray();
+        var body = """{"id":"e10","type":"action.execute","sequence_number":1,"timestamp":"2024-01-01T00:00:00Z","data":{"action":"order","params":{},"conversation":{"id":"c1","customer_id":"u1","customer_source":"intercom","metadata":{"plan":"pro"}}}}"""u8.ToArray();
         var header = MakeSignatureHeader(body, TestKey);
         var verifier = CreateVerifier();
 
-        var evt = (ResourcePullEvent)verifier.Parse(body, header);
+        var evt = (ActionExecuteEvent)verifier.Parse(body, header);
 
         evt.Conversation!.CustomerSource.Should().Be("intercom");
         evt.Conversation.Metadata!.Value.GetProperty("plan").GetString().Should().Be("pro");
