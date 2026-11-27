@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.2.1]
+
+Tool lists include enabled MCP tools. Tool updates support webhook, HTTP, async and draft tools.
+
 ## [0.2.0] - 2026-11-25
 
 Brings the library in line with the whole public API.

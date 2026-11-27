@@ -11,6 +11,7 @@ public sealed class ToolsClient
         _pipeline = pipeline;
     }
 
+    /// <summary>Lists company tools and enabled MCP tools. Interactive tools are omitted.</summary>
     public async Task<IReadOnlyList<Tool>> ListAsync(CancellationToken cancellationToken = default)
     {
         var response = await _pipeline.SendAsync<ListToolsResponse>(HttpMethod.Get, "/tools", null, cancellationToken).ConfigureAwait(false);
@@ -20,9 +21,11 @@ public sealed class ToolsClient
     public Task<Tool> CreateAsync(CreateToolRequest request, CancellationToken cancellationToken = default)
         => _pipeline.SendAsync<Tool>(HttpMethod.Post, "/tools", request, cancellationToken);
 
+    /// <summary>Enabled MCP tools can be read by ID. Interactive tools return 404.</summary>
     public Task<Tool> ReadAsync(string toolId, CancellationToken cancellationToken = default)
         => ReadAsync(toolId, null, cancellationToken);
 
+    /// <summary>Enabled MCP tools can be read by ID. Interactive tools return 404.</summary>
     /// <param name="toolId">The ID of the tool.</param>
     /// <param name="version">The version of the tool to read. Leave it null to read the tool's current version.</param>
     /// <param name="cancellationToken">Cancels the request.</param>
@@ -32,6 +35,7 @@ public sealed class ToolsClient
         return _pipeline.SendAsync<Tool>(HttpMethod.Get, $"/tools/{Uri.EscapeDataString(toolId)}{qs}", null, cancellationToken);
     }
 
+    /// <summary>Updates a webhook, HTTP, async or draft tool. Only draft tools can change kind. Edit repository-managed tools in their files.</summary>
     public Task<Tool> UpdateAsync(string toolId, UpdateToolRequest request, CancellationToken cancellationToken = default)
         => _pipeline.SendAsync<Tool>(HttpMethod.Put, $"/tools/{Uri.EscapeDataString(toolId)}", request, cancellationToken);
 
