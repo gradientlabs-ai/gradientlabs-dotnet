@@ -11,7 +11,7 @@ public sealed class BackOfficeTask
     public IReadOnlyList<PublicApiAttachment>? Attachments { get; init; }
     public IReadOnlyDictionary<string, string>? Metadata { get; init; }
     public BackOfficeTaskResult? Result { get; init; }
-    public BackOfficeTaskStatus? Status { get; init; }
+    public BackOfficeTaskStatus Status { get; init; }
     public DateTimeOffset Created { get; init; }
     public DateTimeOffset? Completed { get; init; }
     public DateTimeOffset? Failed { get; init; }
@@ -29,7 +29,6 @@ public sealed class PublicApiAttachment
     public string IdempotencyKey { get; init; } = string.Empty;
     public string FileName { get; init; } = string.Empty;
     public string? ExternalUrl { get; init; }
-    public byte[]? RawContents { get; init; }
 
     [JsonExtensionData]
     public IDictionary<string, JsonElement>? AdditionalProperties { get; init; }

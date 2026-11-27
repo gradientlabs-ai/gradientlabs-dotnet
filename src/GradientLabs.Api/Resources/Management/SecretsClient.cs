@@ -11,11 +11,14 @@ public sealed class SecretsClient
         _pipeline = pipeline;
     }
 
-    public Task<IReadOnlyList<Secret>> ListAsync(CancellationToken cancellationToken = default)
-        => _pipeline.SendAsync<IReadOnlyList<Secret>>(HttpMethod.Get, "/secrets", null, cancellationToken);
+    public async Task<IReadOnlyList<Secret>> ListAsync(CancellationToken cancellationToken = default)
+    {
+        var response = await _pipeline.SendAsync<ListSecretsResponse>(HttpMethod.Get, "/secrets", null, cancellationToken).ConfigureAwait(false);
+        return response.Secrets;
+    }
 
-    public Task WriteAsync(string name, WriteSecretRequest request, CancellationToken cancellationToken = default)
-        => _pipeline.SendAsync(HttpMethod.Put, $"/secrets/{Uri.EscapeDataString(name)}", request, cancellationToken);
+    public Task<Secret> WriteAsync(string name, WriteSecretRequest request, CancellationToken cancellationToken = default)
+        => _pipeline.SendAsync<Secret>(HttpMethod.Put, $"/secrets/{Uri.EscapeDataString(name)}", request, cancellationToken);
 
     public Task RevokeAsync(string name, CancellationToken cancellationToken = default)
         => _pipeline.SendAsync(HttpMethod.Delete, $"/secrets/{Uri.EscapeDataString(name)}", null, cancellationToken);

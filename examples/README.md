@@ -1,4 +1,4 @@
-# Examples
+﻿# Examples
 
 Each subdirectory contains a runnable console app demonstrating a Gradient Labs API feature.
 
@@ -7,6 +7,7 @@ Each subdirectory contains a runnable console app demonstrating a Gradient Labs 
 - .NET 8 SDK or later
 - A Gradient Labs API key (set `GRADIENT_LABS_API_KEY`)
 - Optionally set `GRADIENT_LABS_BASE_URL` to point at a local stack
+- `tools/` and `resources/` create on a branch: set `GRADIENT_LABS_BRANCH_NAME` to a branch made in the Gradient Labs app
 
 ## Running an example
 

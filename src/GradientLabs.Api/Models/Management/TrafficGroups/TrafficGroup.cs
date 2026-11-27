@@ -44,3 +44,8 @@ public sealed class CreateTrafficGroupExclusionRequest
     public string TargetType { get; init; } = string.Empty;
     public string TargetId { get; init; } = string.Empty;
 }
+
+internal sealed class ListTrafficGroupsResponse
+{
+    public IReadOnlyList<TrafficGroup> TrafficGroups { get; init; } = [];
+}

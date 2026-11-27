@@ -38,3 +38,8 @@ public sealed class UpdateTerminologySubstitutionRequest
     public string? ResourceAttributeJsonPath { get; init; }
     public string? ResourceValueToMatch { get; init; }
 }
+
+internal sealed class ListTerminologySubstitutionsResponse
+{
+    public IReadOnlyList<TerminologySubstitution> Substitutions { get; init; } = [];
+}

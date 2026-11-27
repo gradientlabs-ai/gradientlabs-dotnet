@@ -21,6 +21,8 @@ public sealed class GradientLabsManagementClient : IDisposable
     public TopicsClient Topics { get; }
     public TerminologySubstitutionsClient TerminologySubstitutions { get; }
     public IpAddressesClient IpAddresses { get; }
+    public KnowledgeBasesClient KnowledgeBases { get; }
+    public FilesClient Files { get; }
 
     public GradientLabsManagementClient(GradientLabsClientOptions options)
     {
@@ -42,6 +44,8 @@ public sealed class GradientLabsManagementClient : IDisposable
         Topics = new TopicsClient(_pipeline);
         TerminologySubstitutions = new TerminologySubstitutionsClient(_pipeline);
         IpAddresses = new IpAddressesClient(_pipeline);
+        KnowledgeBases = new KnowledgeBasesClient(_pipeline);
+        Files = new FilesClient(_pipeline);
 
         if (!string.IsNullOrEmpty(options.WebhookSigningKey))
             _webhookVerifier = new GradientLabsWebhookVerifier(options.WebhookSigningKey, options);

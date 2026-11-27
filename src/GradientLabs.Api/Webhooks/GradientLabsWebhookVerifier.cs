@@ -79,10 +79,10 @@ public sealed class GradientLabsWebhookVerifier
             evt = DeserializeWithEnvelope<ConversationHandOffEvent>(root, dataEl);
         else if (eventType == GradientLabsWebhookEventType.ConversationFinished)
             evt = DeserializeWithEnvelope<ConversationFinishedEvent>(root, dataEl);
+        else if (eventType == GradientLabsWebhookEventType.ConversationStart)
+            evt = DeserializeWithEnvelope<ConversationStartEvent>(root, dataEl);
         else if (eventType == GradientLabsWebhookEventType.ActionExecute)
             evt = DeserializeWithEnvelope<ActionExecuteEvent>(root, dataEl);
-        else if (eventType == GradientLabsWebhookEventType.ResourcePull)
-            evt = DeserializeWithEnvelope<ResourcePullEvent>(root, dataEl);
         else if (eventType == GradientLabsWebhookEventType.BackOfficeTaskComplete)
             evt = DeserializeWithEnvelope<BackOfficeTaskCompleteEvent>(root, dataEl);
         else if (eventType == GradientLabsWebhookEventType.BackOfficeTaskHandOff)

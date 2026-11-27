@@ -13,6 +13,9 @@ public sealed class VoiceCallContext
     public string? LastExecutedProcedureUrl { get; init; }
     public string? GradientLabsUrl { get; init; }
 
+    /// <summary>A link a human agent opens to take over the call. Only set when the call is being handed off live.</summary>
+    public string? LiveHandoffUrl { get; init; }
+
     [JsonExtensionData]
     public IDictionary<string, JsonElement>? AdditionalProperties { get; init; }
 }

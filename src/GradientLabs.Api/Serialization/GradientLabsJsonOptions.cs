@@ -39,6 +39,7 @@ internal static class GradientLabsJsonOptions
         options.Converters.Add(new OpenStringConverter<BodyEncoding>(v => new(v)));
         options.Converters.Add(new OpenStringConverter<ParameterSource>(v => new(v)));
         options.Converters.Add(new OpenStringConverter<ParameterType>(v => new(v)));
+        options.Converters.Add(new OpenStringConverter<ParameterTransferMode>(v => new(v)));
         options.Converters.Add(new OpenStringConverter<GradientLabsWebhookEventType>(v => new(v)));
 
         return options;

@@ -39,8 +39,8 @@ public class PaginationTests
     [Fact]
     public async Task ManualIteration_RequestsSecondPageUsingFirstPageNext()
     {
-        var firstPage = """{"items":[{"id":"p1","name":"P1","status":"live","created":"2024-01-01T00:00:00Z","updated":"2024-01-01T00:00:00Z","has_daily_limit":false}],"next":"cursor_page2"}""";
-        var secondPage = """{"items":[{"id":"p2","name":"P2","status":"live","created":"2024-01-01T00:00:00Z","updated":"2024-01-01T00:00:00Z","has_daily_limit":false}]}""";
+        var firstPage = """{"procedures":[{"id":"p1","name":"P1","status":"live","created":"2024-01-01T00:00:00Z","updated":"2024-01-01T00:00:00Z","has_daily_limit":false}],"pagination":{"next":"cursor_page2"}}""";
+        var secondPage = """{"procedures":[{"id":"p2","name":"P2","status":"live","created":"2024-01-01T00:00:00Z","updated":"2024-01-01T00:00:00Z","has_daily_limit":false}],"pagination":{"prev":"cursor_page1"}}""";
 
         var callCount = 0;
         var handler = new FakeHttpMessageHandler();
@@ -66,5 +66,6 @@ public class PaginationTests
         lastRequest.RequestUri!.Query.Should().Contain("cursor=cursor_page2");
         page2.Items.Should().HaveCount(1);
         page2.HasNextPage.Should().BeFalse();
+        page2.Prev.Should().Be("cursor_page1");
     }
 }

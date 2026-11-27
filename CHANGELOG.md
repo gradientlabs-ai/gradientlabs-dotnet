@@ -1,5 +1,65 @@
 # Changelog
 
+## [0.2.0] - 2026-11-25
+
+Brings the library in line with the whole public API.
+
+**Breaking.** Calls that no longer matched the API now do; some signatures changed to match.
+
+| Was | Now |
+|---|---|
+| `Articles.UpsertAsync(supportPlatform, request)` sent `PUT /support-platforms/{platform}/articles/{id}` | `Articles.UpsertAsync(request)` sends `POST /articles` |
+| `Articles.DeleteAsync(supportPlatform, articleId)` | `Articles.DeleteAsync(articleId)` sends `DELETE /articles/{id}` |
+| `Articles.SetUsageStatusAsync(supportPlatform, articleId, request)` sent `PUT` | `Articles.SetUsageStatusAsync(articleId, request)` sends `POST /articles/{id}/usage-status` |
+| `Conversations.ReadDeprecatedAsync(conversationId, customerId)` | `Conversations.ReadDeprecatedAsync(conversationId)`: the API takes no customer ID |
+| `Notes.SetStatusAsync` returned `Task<Note>` | Returns `Task`: the API returns no body |
+| `TrafficGroups.CreateTargetAsync` and `CreateExclusionAsync` returned `TrafficGroup` | Return the created `TrafficGroupTarget` |
+| `CreateBackOfficeTaskRequest` | Supply `AgentId`, `ProcedureId` and `Input`. JSON null is a valid input value. |
+| `ReturnAsyncToolResultRequest` | Supply the result in `Payload`, including when the payload is JSON null. |
+| `CreateToolRequest.Id` | Read the assigned ID from the returned tool. Create a tool with HTTP, webhook, async or draft settings. |
+| `UpdateResourceSourceRequest.Schema` was a `ResourceSchema` | Supply a `ResourceSourceSchemaUpdate` containing the raw JSON schema. |
+| `SecretRefreshMechanismHttp.RequestDefinition` used tool retry settings | Supply a `SecretRefreshRequestDefinition` with an optional request timeout. |
+| `Procedure.Author` and `PublicApiAttachment.RawContents` | These properties are absent from procedure and task responses. |
+| `ProcedureVersion.Author` was a `UserDetails` | A `string` |
+| `ResourceTypeSourceConfig.Cache` was a `bool` | A duration `string` such as `"10m"`, or `"never"` |
+| `Secret.RefreshMechanismHttp` and `WriteSecretRequest.RefreshMechanismHttp` were an `HttpDefinition` | A `SecretRefreshMechanismHttp` holding `RequestDefinition` and `ResponseParamName` |
+| `CreateNoteRequest.Body` was a non-null `string` | `string?`: send exactly one of `Body` and `WebpageUrl` |
+| `ExecuteToolRequest.Token` was a non-null `string` | `string?`, left out when null |
+| `ResourcePullEvent` | Handle resource fetches as `ActionExecuteEvent` with the configured action name. |
+| `ActionExecuteEvent.Conversation` was never null | Null when the event is for a back-office task, which is in the new `BackOfficeTask` |
+
+Fixed requests and responses that never worked against the API:
+
+- `HandOffTargets.UpsertAsync` now sends `POST`; the update methods on tools, resource types, resource
+  sources, terminology substitutions and traffic groups now send `PUT`.
+- `Voice.ReadLatestCallContextAsync` now calls `/voice/latest-call-context/{phone_number}`, and
+  `ResourceSources.UpdateSchemaByExamplesAsync` calls `/resource-sources/{id}/schema-by-examples`.
+- The list methods read the API's response envelopes, and `Procedures.ListAsync` reads its
+  `pagination` cursors. Topics and procedure versions read the API's capitalised field names.
+- `Procedures.SetLimitAsync` returns the updated `Procedure`; `Secrets.WriteAsync` returns the `Secret`.
+- Back-office task webhook events carry the task in `BackOfficeTask`. Their `Conversation` and `Data`
+  properties were never set and are now obsolete.
+
+Added:
+
+- `KnowledgeBases` on the Management client: `ListAsync`, `CreateAsync`, `ReadAsync`, `UpdateAsync`.
+- `Files` on the Management client: `BeginUploadAsync`, `CreateAsync`, `ListAsync`.
+- `Customers` on the Integration client: `ListMemoriesAsync`, `BatchCreateMemoriesAsync` (`POST
+  /customers/{id}/memories/v2`) and the obsolete `BatchCreateMemoriesDeprecatedAsync`.
+- `Notes.ListAsync` and `Notes.ReadAsync`.
+- `Conversations.ReadAsync(conversationId, supportPlatform)` and `Tools.ReadAsync(toolId, version)` overloads.
+- The `conversation.start` webhook event (`ConversationStartEvent`) and `ConversationStartWebhookResponse`
+  to reply to it.
+- `Conversations.AddMessageAsync` returns the stored message. Back-office task attachments send inline file contents under `base_64_contents`.
+- Fields: `KnowledgeBaseIds` on articles and notes, `Attributes` on notes, `Ref` on hand-off targets,
+  `BranchId`/`BranchName` on tool, resource type and resource source creation, `Managed` on resource
+  sources, `TransferMode` on tool parameters, `Retry` on HTTP definitions, `ParameterSets` on tool
+  updates, `LiveHandoffUrl` on voice call context, `LastCustomerMessageId` on agent messages, and
+  `CustomerSource`, `Metadata` and `BackOfficeTask` on action webhook events.
+- Values: `ParameterType` `StringArray`, `Json`, `Duration`, `Attachment`; `ParameterTransferMode`;
+  `SupportPlatform.Kustomer`; `CustomerSupportPlatformIdentifierType` `SalesforceContactEmail` and
+  `SalesforceSuppliedEmail`.
+
 ## [0.1.2] - 2026-07-31
 
 **Breaking.** `POST /outbound/conversations` has been removed from the API and replaced by one

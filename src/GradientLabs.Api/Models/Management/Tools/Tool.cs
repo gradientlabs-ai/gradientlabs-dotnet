@@ -15,6 +15,10 @@ public sealed class Tool
     public McpConfiguration? Mcp { get; init; }
     public bool? Draft { get; init; }
     public IReadOnlyList<ToolParameterSet>? ParameterSets { get; init; }
+    /// <summary>Returned when creating a tool on a branch.</summary>
+    public string? BranchId { get; init; }
+    /// <summary>Returned when creating a tool on a branch.</summary>
+    public string? BranchName { get; init; }
 
     [JsonExtensionData]
     public IDictionary<string, JsonElement>? AdditionalProperties { get; init; }
@@ -28,6 +32,9 @@ public sealed class ToolParameter
     public IReadOnlyList<ParameterSource> AllowedSources { get; init; } = [];
     public bool? Required { get; init; }
     public IReadOnlyList<ParameterOption>? Options { get; init; }
+
+    /// <summary>How an attachment parameter's file reaches the tool. Required when <see cref="Type"/> is <c>attachment</c>, and not allowed otherwise.</summary>
+    public ParameterTransferMode? TransferMode { get; init; }
 
     [JsonExtensionData]
     public IDictionary<string, JsonElement>? AdditionalProperties { get; init; }
@@ -58,6 +65,19 @@ public sealed class HttpDefinition
     public string UrlTemplate { get; init; } = string.Empty;
     public HttpBodyDefinition? Body { get; init; }
     public IReadOnlyDictionary<string, string>? HeaderTemplates { get; init; }
+    public HttpRetryConfig? Retry { get; init; }
+
+    [JsonExtensionData]
+    public IDictionary<string, JsonElement>? AdditionalProperties { get; init; }
+}
+
+public sealed class HttpRetryConfig
+{
+    /// <summary>The most times the request is attempted, from 1 to 10. A request other than GET is never retried after a connection error.</summary>
+    public long? MaxAttempts { get; init; }
+
+    /// <summary>How many seconds each attempt waits for a response, from 1 to 90. The default is 10.</summary>
+    public long? RequestTimeoutSeconds { get; init; }
 
     [JsonExtensionData]
     public IDictionary<string, JsonElement>? AdditionalProperties { get; init; }
@@ -94,16 +114,6 @@ public sealed class ChildTool
 {
     public HttpDefinition? Http { get; init; }
     public ToolWebhookConfig? Webhook { get; init; }
-    public WorkflowConfiguration? Workflow { get; init; }
-
-    [JsonExtensionData]
-    public IDictionary<string, JsonElement>? AdditionalProperties { get; init; }
-}
-
-public sealed class WorkflowConfiguration
-{
-    public string WorkflowType { get; init; } = string.Empty;
-    public string TaskQueue { get; init; } = string.Empty;
 
     [JsonExtensionData]
     public IDictionary<string, JsonElement>? AdditionalProperties { get; init; }
@@ -117,4 +127,9 @@ public sealed class ToolParameterSet
 
     [JsonExtensionData]
     public IDictionary<string, JsonElement>? AdditionalProperties { get; init; }
+}
+
+internal sealed class ListToolsResponse
+{
+    public IReadOnlyList<Tool> Tools { get; init; } = [];
 }
