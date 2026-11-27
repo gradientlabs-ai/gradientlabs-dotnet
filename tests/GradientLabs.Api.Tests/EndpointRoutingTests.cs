@@ -310,6 +310,17 @@ public class EndpointRoutingTests
     }
 
     [Fact]
+    public async Task ListTools_ReadsEnabledMcpTool()
+    {
+        var handler = new FakeHttpMessageHandler(HttpStatusCode.OK, """{"tools":[{"id":"tool_1","name":"lookup","description":"Look up an order","parameters":[],"mcp":{"server_id":"mcpserver_1","external_tool_name":"lookup_order"}}]}""");
+        using var client = Management(handler);
+        var tools = await client.Tools.ListAsync();
+        var mcp = tools.Should().ContainSingle().Subject.Mcp;
+        mcp!.ServerId.Should().Be("mcpserver_1");
+        mcp.ExternalToolName.Should().Be("lookup_order");
+    }
+
+    [Fact]
     public async Task VoiceCallContext_ReadsLiveHandoffUrl()
     {
         var handler = new FakeHttpMessageHandler(HttpStatusCode.OK, """{"started_at":"2024-01-01T00:00:00Z","live_handoff_url":"https://app.gradient-labs.ai/acme/main/live-handoffs/+447700900123"}""");
